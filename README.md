@@ -11,7 +11,7 @@ Launch the CaQtDM control screen with ./display.
 
 Please install the current WIENER-CRATE-MIB.txt from Wiener:  https://file.wiener-d.com/software/net-snmp/
 
-Paul Nord
+Paul Nord,
 Valparaiso University
 
 Based on earlier work by members of the STAR collaboration.
