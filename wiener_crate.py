@@ -33,8 +33,8 @@ class wiener_crate():
         # http://file.wiener-d.com/software/net-snmp/net-snmp-CompileForExtendedPrecision-2015-03-06.txt
         #self.snmpwalk = "/usr/local/Net-SNMP_5-8/code/apps/snmpwalk"
         #self.snmpwalk = "/usr/bin/snmpwalk"
-        self.snmpwalk ="echo /usr/bin/snmpwalk -v 2c -c "+ community[0] + " " + self.ip + " WIENER-CRATE-MIB::"
-        self.snmpset = "echo /usr/bin/snmpset  -v 2c -c "+ community[1] + " " + self.ip + " WIENER-CRATE-MIB::"
+        self.snmpwalk ="/usr/bin/snmpwalk -v 2c -c "+ community[0] + " " + self.ip + " WIENER-CRATE-MIB::"
+        self.snmpset = "/usr/bin/snmpset  -v 2c -c "+ community[1] + " " + self.ip + " WIENER-CRATE-MIB::"
 
         #create PV's for all channels, add them to channel list and dictionary
         board = 0
