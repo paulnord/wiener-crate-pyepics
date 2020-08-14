@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1072</width>
+    <width>1015</width>
     <height>680</height>
    </rect>
   </property>
@@ -29043,13 +29043,39 @@
   <widget class="QWidget" name="layoutWidget_6">
    <property name="geometry">
     <rect>
-     <x>630</x>
-     <y>40</y>
-     <width>271</width>
-     <height>61</height>
+     <x>500</x>
+     <y>20</y>
+     <width>421</width>
+     <height>81</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_43">
+    <item>
+     <widget class="caMessageButton" name="camessagebutton_17">
+      <property name="text">
+       <string>Main ON</string>
+      </property>
+      <property name="channel" stdset="0">
+       <string notr="true">CRATE:LV:mainOn</string>
+      </property>
+      <property name="pressMessage">
+       <string notr="true">1</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="caMessageButton" name="camessagebutton_16">
+      <property name="text">
+       <string>Main OFF</string>
+      </property>
+      <property name="channel" stdset="0">
+       <string notr="true">CRATE:LV:mainOff</string>
+      </property>
+      <property name="pressMessage">
+       <string notr="true">1</string>
+      </property>
+     </widget>
+    </item>
     <item>
      <widget class="caMessageButton" name="camessagebutton_15">
       <property name="text">

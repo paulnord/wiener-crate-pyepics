@@ -11,8 +11,10 @@ class wiener_crate():
     def __init__(self, ip, config_file, channels=[8,8,8,8,8], community=["public","private","admin"]):
         # Control Buttons
         self.board_channels = channels
-        self.DisableSNMPset = False  # If operating EPICS as monitor only, this will prevent setting voltages,  Power On/Off will work
+        self.disableSNMPset = True  # If operating EPICS as monitor only, this will prevent setting voltages,  Power On/Off will work
         self.readData = builder.boolOut('LV:readData', on_update=self.place_voltages, HIGH=0.1)
+        self.mainOn = builder.aOut('LV:mainOn', on_update=self.turnMainOn, HIGH=0.1)
+        self.mainOff = builder.aOut('LV:mainOff', on_update=self.turnMainOff, HIGH=0.1)
         self.on = builder.aOut('LV:on', on_update=self.turnOn, HIGH=0.1)
         self.off = builder.aOut('LV:off', on_update=self.turnOff, HIGH=0.1)
         self.setV = builder.aOut("LV:setVals", on_update=self.setVals)
@@ -33,21 +35,21 @@ class wiener_crate():
         # http://file.wiener-d.com/software/net-snmp/net-snmp-CompileForExtendedPrecision-2015-03-06.txt
         #self.snmpwalk = "/usr/local/Net-SNMP_5-8/code/apps/snmpwalk"
         #self.snmpwalk = "/usr/bin/snmpwalk"
-        self.snmpwalk ="/usr/bin/snmpwalk -v 2c -c "+ community[0] + " " + self.ip + " WIENER-CRATE-MIB::"
-        self.snmpset = "/usr/bin/snmpset  -v 2c -c "+ community[1] + " " + self.ip + " WIENER-CRATE-MIB::"
+        self.snmpwalk ="/home/stgc/pnord/net-snmp-5.8/apps/snmpwalk -v 2c -c "+ community[0] + " " + self.ip + " WIENER-CRATE-MIB::"
+        self.snmpset = "/home/stgc/pnord/net-snmp-5.8/apps/snmpset  -v 2c -c "+ community[1] + " " + self.ip + " WIENER-CRATE-MIB::"
 
         #create PV's for all channels, add them to channel list and dictionary
         board = 0
         for self.i in self.board_channels: # board
             for self.j in xrange(self.i): # channel
                 name = "u"+str(100*board+self.j)
-                self.chlist.append(Channel(name, board, self.j, self.snmpset, self.DisableSNMPset))
+                self.chlist.append(Channel(name, board, self.j, self.snmpset, self.disableSNMPset))
                 self.dictWiener[(board,self.j)] = self.chlist[-1]
                 self.dictCrate[(name)] = self.chlist[-1]
             board += 1
         print "Before start, you have to Load Voltage from file through Load Voltage button "
         print "Voltages settings will load from " + self.config_file
-        if self.DisableSNMPset:
+        if self.disableSNMPset:
             print "EPICS task setup in monitor-only mode.  No voltage or current set commands will run."
 
     def getValue(self, cm):
@@ -183,6 +185,30 @@ class wiener_crate():
     #        f['voltage'][i] = volt
     #        f['current'][i] = curr
     #    f.to_csv(self.config_file, index=False)
+
+    def turnMainOn(self, val):
+        #print("turnMainOn called",val)
+        if val < 0: return
+        cmd = self.snmpset + ' sysMainSwitch.0 i 1'
+        if self.disableSNMPset:
+            print "Power On Disabled  :  " + cmd
+            return
+        p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        out = p.communicate()
+
+        self.mainOn.set(-1)
+
+    def turnMainOff(self, val):
+        #print("turnMainOff called",val)
+        if val < 0: return
+        cmd = self.snmpset + ' sysMainSwitch.0 i 0'
+        if self.disableSNMPset:
+            print "Power Off Disabled  :  " + cmd
+            return
+        p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        out = p.communicate()
+
+        self.mainOff.set(-1)
 
     def turnOn(self, val):
         #print("turnOn called",val)
